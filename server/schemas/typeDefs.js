@@ -23,6 +23,7 @@ const typeDefs = gql`
     user: User
   }
 
+
   input SavedBookInput {
     bookId: String!
     authors: [String]
@@ -45,5 +46,3 @@ const typeDefs = gql`
 `;
 
 module.exports = typeDefs;
-
-
