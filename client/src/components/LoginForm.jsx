@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { loginUser } from '../utils/API';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
@@ -11,6 +12,9 @@ const LoginForm = () => {
 
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
+  // Apollo mutation hook
+  const [loginUser, { error }] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -27,12 +31,10 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await loginUser(userFormData);
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-      const { token } = await response.json();
-      Auth.login(token);
+      const { data } = await loginUser({
+        variables: { ...userFormData },
+      });
+      Auth.login(data.login.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
@@ -47,7 +49,7 @@ const LoginForm = () => {
   return (
     <>
       <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant="danger">
+        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert || error} variant="danger">
           Something went wrong with your login!
         </Alert>
         <Form.Group className="mb-3">
@@ -87,4 +89,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
