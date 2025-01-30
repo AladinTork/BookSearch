@@ -13,7 +13,9 @@ import AppNavbar from './components/Navbar';
 
 // Construct our main GraphQL API endpoint
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql', 
+  uri: window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001/graphql' // For local development
+    : 'https://booksearch-0ktr.onrender.com/graphql', // Replace with your deployed app URL
 });
 
 // Middleware to attach the JWT token to every request as an `authorization` header
